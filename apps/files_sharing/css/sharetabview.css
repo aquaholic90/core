@@ -285,6 +285,7 @@
 
 =======
 .public-link-modal--label, .public-link-modal--input {
+	position: relative;
 	display: block;
 	width: calc(100% - 15px) !important;
 }
