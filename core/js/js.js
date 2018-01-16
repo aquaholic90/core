@@ -325,9 +325,13 @@ var OC = {
 		if (_.isUndefined(this._currentUserDisplayName)) {
 			this._currentUserDisplayName = document.getElementsByTagName('head')[0].getAttribute('data-user-displayname');
 		}
+		if (_.isUndefined(this._currentUserEmail)) {
+			this._currentUserEmail = document.getElementsByTagName('head')[0].getAttribute('data-user-email') || null;
+		}
 		return {
 			uid: this.currentUser,
-			displayName: this._currentUserDisplayName
+			displayName: this._currentUserDisplayName,
+			email: this._currentUserEmail
 		};
 	},
 
