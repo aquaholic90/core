@@ -163,12 +163,7 @@ if (isset($_POST['action']) && isset($_POST['itemType']) && isset($_POST['itemSo
 			// read post variables
 			$link = (string)$_POST['link'];
 			$file = (string)$_POST['file'];
-<<<<<<< HEAD
 			$to_address = (string)$_POST['toaddress'];
-=======
-			$to_address = (string)$_POST['toAddress'];
-			$to_cc_address = (string)$_POST['toCcAddress'];
->>>>>>> Send custom link share mail notification when specified
 			$emailBody = null;
 			if (isset($_POST['emailBody'])) {
 				$emailBody = trim((string)$_POST['emailBody']);
