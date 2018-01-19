@@ -15,15 +15,18 @@
 
 	var TEMPLATE =
 		'<form id="emailPrivateLink" class="emailPrivateLinkForm">' +
-		'	<span class="emailPrivateLinkForm--send-indicator success-message-global absolute-center hidden">{{sending}}</span>' +
-		'    <label class="public-link-modal--label" for="emailPrivateLinkField-{{cid}}">{{mailLabel}}</label>' +
-		'    <input class="public-link-modal--input emailPrivateLinkForm--emailField" id="emailPrivateLinkField-{{cid}}" value="{{email}}" placeholder="{{mailPlaceholder}}" type="email" />' +
-		'    <div class="emailPrivateLinkForm--elements hidden">' +
-		'        <a href="#" class="emailPrivateLinkForm--addAddressButton text-small pull-right">{{addCcAddress}}</a>' +
-		'        <input class="public-link-modal--input emailPrivateLinkForm--emailCcField hidden" id="emailCcPrivateLinkField-{{cid}}" value="{{email}}" placeholder="{{mailPlaceholder}} (CC)" type="email" />' +
-		'        <label class="public-link-modal--label" for="emailBodyPrivateLinkField-{{cid}}">{{mailMessageLabel}}</label>' +
-		'        <textarea class="public-link-modal--input emailPrivateLinkForm--emailBodyField" id="emailBodyPrivateLinkField-{{cid}}" rows="3" placeholder="{{mailBodyPlaceholder}}"></textarea>' +
-		'    </div>' +
+		'  <span class="emailPrivateLinkForm--send-indicator success-message-global absolute-center hidden">{{sending}}</span>' +
+		'  <label class="public-link-modal--label" for="emailPrivateLinkField-{{cid}}">{{mailLabel}}</label>' +
+		'  <input class="public-link-modal--input emailPrivateLinkForm--emailField" id="emailPrivateLinkField-{{cid}}" value="{{email}}" placeholder="{{mailPlaceholder}}" type="email" />' +
+		'  <div class="emailPrivateLinkForm--elements hidden">' +
+        '    {{#if userHasEmail}}' +
+		'    <label class="public-link-modal--bccSelf">' +
+		'      <input class="emailPrivateLinkForm--emailBccSelf" type="checkbox"> {{bccSelf}}' +
+		'    </label>' +
+        '    {{/if}}' +
+		'    <label class="public-link-modal--label" for="emailBodyPrivateLinkField-{{cid}}">{{mailMessageLabel}}</label>' +
+		'    <textarea class="public-link-modal--input emailPrivateLinkForm--emailBodyField" id="emailBodyPrivateLinkField-{{cid}}" rows="3" placeholder="{{mailBodyPlaceholder}}"></textarea>' +
+		'  </div>' +
 		'</form>';
 
 	/**
@@ -42,8 +45,7 @@
 
 		events: {
 			"keyup   .emailPrivateLinkForm--emailField"       : "toggleMailElements",
-			"keydown .emailPrivateLinkForm--emailBodyField"   : "expandMailBody",
-			"click   .emailPrivateLinkForm--addAddressButton" : "toggleEmailCcField"
+			"keydown .emailPrivateLinkForm--emailBodyField"   : "expandMailBody"
 		},
 
 		/** @type {Function} **/
@@ -77,11 +79,6 @@
 			}
 		},
 
-		toggleEmailCcField: function() {
-			this.$el.find('.emailPrivateLinkForm--addAddressButton').remove();
-			this.$el.find('.emailPrivateLinkForm--emailCcField').slideDown();
-		},
-
 		/**
 		 * Send the link share information by email
 		 *
@@ -98,17 +95,11 @@
 				});
 			}
 
-			if (!this.validateEmail(mail.cc)) {
-				return deferred.reject({
-					message: t('core', '{email} is not a valid address!', {email: mail.cc})
-				});
-			}
-
 			var params = {
 				action      : 'email',
 				toAddress   : mail.to,
-				toCcAddress : mail.cc,
 				emailBody   : mail.body,
+                bccSelf     : mail.bccSelf,
 				link        : this.model.getLink(),
 				itemType    : itemType,
 				itemSource  : itemSource,
@@ -146,9 +137,9 @@
 			var $formItems         = this.$el.find('.emailPrivateLinkForm input, .emailPrivateLinkForm textarea');
 			var $formSendIndicator = this.$el.find('.emailPrivateLinkForm--send-indicator');
 			var  mail = {
-				 to   : this.$el.find('.emailPrivateLinkForm--emailField').val(),
-				 cc   : this.$el.find('.emailPrivateLinkForm--emailCcField').val(),
-				 body : this.$el.find('.emailPrivateLinkForm--emailBodyField').val()
+				 to      : this.$el.find('.emailPrivateLinkForm--emailField').val(),
+				 bccSelf : this.$el.find('.emailPrivateLinkForm--emailBccSelf').is(':checked'),
+				 body    : this.$el.find('.emailPrivateLinkForm--emailBodyField').val()
 			};
 
 			if (mail.to !== '') {
@@ -173,13 +164,14 @@
 			var email = $email.val();
 
 			this.$el.html(this.template({
-				cid: this.cid,
-				mailPlaceholder: t('core', 'Email link to person'),
-				addCcAddress: t('core', 'Add CC address'),
-				mailLabel: t('core', 'Send link via email'),
-				mailBodyPlaceholder: t('core', 'Add personal message'),
-				email: email,
-				sending : t('core', 'Sending') + ' ...'
+				cid                 : this.cid,
+				userHasEmail        : !!OC.getCurrentUser().email,
+				mailPlaceholder     : t('core', 'Email link to person'),
+				bccSelf             : t('core', 'Send copy to self'),
+				mailLabel           : t('core', 'Send link via email'),
+				mailBodyPlaceholder : t('core', 'Add personal message'),
+				email               : email,
+				sending             : t('core', 'Sending') + ' ...'
 			}));
 
 			if ($email.length !== 0) {
