@@ -19,11 +19,11 @@
 		'  <label class="public-link-modal--label" for="emailPrivateLinkField-{{cid}}">{{mailLabel}}</label>' +
 		'  <input class="public-link-modal--input emailPrivateLinkForm--emailField" id="emailPrivateLinkField-{{cid}}" value="{{email}}" placeholder="{{mailPlaceholder}}" type="email" />' +
 		'  <div class="emailPrivateLinkForm--elements hidden">' +
-        '    {{#if userHasEmail}}' +
+		'    {{#if userHasEmail}}' +
 		'    <label class="public-link-modal--bccSelf">' +
 		'      <input class="emailPrivateLinkForm--emailBccSelf" type="checkbox"> {{bccSelf}}' +
 		'    </label>' +
-        '    {{/if}}' +
+		'    {{/if}}' +
 		'    <label class="public-link-modal--label" for="emailBodyPrivateLinkField-{{cid}}">{{mailMessageLabel}}</label>' +
 		'    <textarea class="public-link-modal--input emailPrivateLinkForm--emailBodyField" id="emailBodyPrivateLinkField-{{cid}}" rows="3" placeholder="{{mailBodyPlaceholder}}"></textarea>' +
 		'  </div>' +
@@ -99,7 +99,7 @@
 				action      : 'email',
 				toAddress   : mail.to,
 				emailBody   : mail.body,
-                bccSelf     : mail.bccSelf,
+				bccSelf     : mail.bccSelf,
 				link        : this.model.getLink(),
 				itemType    : itemType,
 				itemSource  : itemSource,
