@@ -87,13 +87,18 @@ class MailNotifications {
 		$this->senderDisplayName = $this->user->getDisplayName();
 	}
 
+	/**
+	 * split a list of comma or semicolon separated email addresses
+	 *
+	 * @param string $mailsstring email addresses
+	 * @return array list of individual addresses
+	 */
 	private function _mailStringToArray($mailsstring) {
 		$sanatised  = str_replace([', ', '; ', ',', ';', ' '], ',', $mailsstring);
 		$mail_array = explode(',', $sanatised);
 
 		return $mail_array;
 	}
-
 
 	/**
 	 * inform users if a file was shared with them
