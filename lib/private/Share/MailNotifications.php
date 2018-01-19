@@ -87,6 +87,14 @@ class MailNotifications {
 		$this->senderDisplayName = $this->user->getDisplayName();
 	}
 
+	private function _mailStringToArray($mailsstring) {
+		$sanatised  = str_replace([', ', '; ', ',', ';', ' '], ',', $mailsstring);
+		$mail_array = explode(',', $sanatised);
+
+		return $mail_array;
+	}
+
+
 	/**
 	 * inform users if a file was shared with them
 	 *
@@ -169,18 +177,28 @@ class MailNotifications {
 	 * @param string $recipient recipient email address
 	 * @param string $filename the shared file
 	 * @param string $link the public link
+	 * @param array $options allows ['cc'] and ['bcc'] recipients
 	 * @param int $expiration expiration date (timestamp)
 	 * @return string[] $result of failed recipients
 	 */
-	public function sendLinkShareMailFromBody($recipient, $subject, $htmlBody, $textBody) {
-		$recipient = str_replace([', ', '; ', ',', ';', ' '], ',', $recipient);
-		$recipients = explode(',', $recipient);
+	public function sendLinkShareMailFromBody($recipient, $subject, $htmlBody, $textBody, $options = array()) {
+
+		$recipients    = $this->_mailStringToArray($recipient);
+		$ccRecipients  = ($options['cc']) ? $this->_mailStringToArray($options['cc']) : null;
+		$bccRecipients = ($options['bcc']) ? $this->_mailStringToArray($options['bcc']) : null;
+
 		try {
 			$message = $this->mailer->createMessage();
 			$message->setSubject($subject);
 			$message->setTo($recipients);
 			if ($htmlBody !== null) {
 				$message->setHtmlBody($htmlBody);
+			}
+			if ($bccRecipients !== null) {
+				$message->setBcc($bccRecipients);
+			}
+			if ($ccRecipients !== null) {
+				$message->setCc($ccRecipients);
 			}
 			$message->setPlainBody($textBody);
 			$message->setFrom([

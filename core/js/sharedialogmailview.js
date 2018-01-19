@@ -44,8 +44,8 @@
 		id: 'shareDialogMailView',
 
 		events: {
-			"keyup   .emailPrivateLinkForm--emailField"       : "toggleMailElements",
-			"keydown .emailPrivateLinkForm--emailBodyField"   : "expandMailBody"
+			"keyup   .emailPrivateLinkForm--emailField"     : "toggleMailElements",
+			"keydown .emailPrivateLinkForm--emailBodyField" : "expandMailBody"
 		},
 
 		/** @type {Function} **/
