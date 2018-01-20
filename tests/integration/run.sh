@@ -58,7 +58,26 @@ declare -x TEST_SERVER_FED_URL
 declare -x TEST_WITH_PHPDEVSERVER
 [[ -z "${TEST_SERVER_URL}" || -z "${TEST_SERVER_FED_URL}" ]] && TEST_WITH_PHPDEVSERVER="true"
 
-if [ "${TEST_WITH_PHPDEVSERVER}" == "true" ]; then
+declare -x TEST_WEBSERVER_USER
+[[ -z "${TEST_WEBSERVER_USER}" ]] && TEST_WITH_PHPDEVSERVER="www-data"
+
+
+
+if [ "${TEST_WITH_PHPDEVSERVER}" != "true" ]; then
+    echo "Not using php inbuilt server for running scenario ..."
+
+    echo "Adjusting file permissions ... "
+    chown "${TEST_WEBSERVER_USER}" "${OC_PATH}" -R
+
+    echo "Adjusting OCC command to run under ${TEST_WEBSERVER_USER}"
+    OCC="su -u ${TEST_WEBSERVER_USER} ${OCC}"
+
+    echo "Adjust trusted hosts"
+    $OCC config:system:set trusted_domains 1 --value=server
+    $OCC config:system:set trusted_domains 2 --value=federated
+
+
+else
 echo "Using php inbuilt server for running scenario ..."
 
 # avoid port collision on jenkins - use $EXECUTOR_NUMBER
@@ -140,12 +159,7 @@ if test "$BEHAT_FILTER_TAGS"; then
 		}
 	}'
 fi
-if [ "${TEST_WITH_PHPDEVSERVER}" != "true" ]; then
-    echo "Adjusting file permissions ... "
-    $OCC config:system:set trusted_domains 1 --value=server
-    $OCC config:system:set trusted_domains 2 --value=federated
-    chown www-data $OC_PATH -R
-fi
+
 
 BEHAT_PARAMS="$BEHAT_PARAMS" $BEHAT --strict -f junit -f pretty $SCENARIO_TO_RUN
 RESULT=$?
