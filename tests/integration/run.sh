@@ -70,7 +70,7 @@ if [ "${TEST_WITH_PHPDEVSERVER}" != "true" ]; then
     chown "${TEST_WEBSERVER_USER}" "${OC_PATH}" -R
 
     echo "Adjusting OCC command to run under ${TEST_WEBSERVER_USER}"
-    OCC="su -u ${TEST_WEBSERVER_USER} ${OCC}"
+    OCC="su-exec ${TEST_WEBSERVER_USER} ${OCC}"
 
     echo "Adjust trusted hosts"
     $OCC config:system:set trusted_domains 1 --value=server
