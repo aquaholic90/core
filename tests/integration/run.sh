@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+ set -eox pipefail
 #composer install
 
 # from http://stackoverflow.com/a/630387
@@ -71,6 +71,7 @@ if [ "${TEST_WITH_PHPDEVSERVER}" != "true" ]; then
 
     echo "Adjusting OCC command to run under ${TEST_WEBSERVER_USER}"
     OCC="su-exec ${TEST_WEBSERVER_USER} ${OCC}"
+    echo $OCC
 
     echo "Adjust trusted hosts"
     $OCC config:system:set trusted_domains 1 --value=server
